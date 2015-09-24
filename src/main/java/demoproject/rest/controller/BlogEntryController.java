@@ -13,33 +13,44 @@ import org.springframework.web.bind.annotation.*;
  * Created by sandeep kulkarni on 7/3/2015.
  */
 @Controller
+@RequestMapping("/rest/blog-entries")
 public class BlogEntryController {
+    private BlogEntryService service;
 
-    private BlogEntryService blogEntryService;
-
-    public BlogEntryController(BlogEntryService blogEntryService){
-        this.blogEntryService = blogEntryService;
+    public BlogEntryController(BlogEntryService service)
+    {
+        this.service = service;
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public @ResponseBody BlogEntry test(@RequestBody BlogEntry blogEntry) {
-//        BlogEntry blogEntry = new BlogEntry();
-//        blogEntry.setTitle("Test title of Blog");
-        return blogEntry;
+    @RequestMapping(value="/{blogEntryId}", method = RequestMethod.GET)
+    public ResponseEntity<BlogEntryDto> getBlogEntry(@PathVariable Long blogEntryId) {
+        BlogEntry entry = service.findBlogEntry(blogEntryId);
+        if(entry != null) {
+            BlogEntryDto blogEntryDto = new BlogEntryDtoAsm().toResource(entry);
+            return new ResponseEntity<BlogEntryDto>(blogEntryDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<BlogEntryDto>(HttpStatus.NOT_FOUND);
+        }
     }
-//
-//    @RequestMapping("/index")
-//    public String indexFile() {
-//        return "index";
-//    }
 
-    @RequestMapping(value = "/rest/blog-entries/{blogEntryId}", method = RequestMethod.GET)
-    public ResponseEntity<BlogEntryDto> getBlogEntry(@PathVariable Long blogEntryId){
-        BlogEntry blogEntry = blogEntryService.find(blogEntryId);
-        if(blogEntry != null)
-        {
-            BlogEntryDto dto = new BlogEntryDtoAsm().toResource(blogEntry);
-            return new ResponseEntity<BlogEntryDto>(dto, HttpStatus.OK);
+    @RequestMapping(value="/{blogEntryId}",method = RequestMethod.DELETE)
+    public ResponseEntity<BlogEntryDto> deleteBlogEntry(@PathVariable Long blogEntryId) {
+        BlogEntry entry = service.deleteBlogEntry(blogEntryId);
+        if(entry != null) {
+            BlogEntryDto blogEntryDto = new BlogEntryDtoAsm().toResource(entry);
+            return new ResponseEntity<BlogEntryDto>(blogEntryDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<BlogEntryDto>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value="/{blogEntryId}", method = RequestMethod.PUT)
+    public ResponseEntity<BlogEntryDto> updateBlogEntry(@PathVariable Long blogEntryId,
+                                                        @RequestBody BlogEntryDto sentBlogEntry) {
+        BlogEntry updatedEntry = service.updateBlogEntry(blogEntryId, sentBlogEntry.toBlogEntry());
+        if(updatedEntry != null) {
+            BlogEntryDto res = new BlogEntryDtoAsm().toResource(updatedEntry);
+            return new ResponseEntity<BlogEntryDto>(res, HttpStatus.OK);
         } else {
             return new ResponseEntity<BlogEntryDto>(HttpStatus.NOT_FOUND);
         }

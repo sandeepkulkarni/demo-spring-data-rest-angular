@@ -6,6 +6,7 @@ package demoproject.core.entity;
 public class BlogEntry {
     private Long blogEntryId;
     private String title;
+    private Blog blog;
 
     public Long getBlogEntryId() {
         return blogEntryId;
@@ -21,5 +22,13 @@ public class BlogEntry {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Blog getBlog() {
+        return blog;
+    }
+
+    public void setBlog(Blog blog) {
+        this.blog = blog;
     }
 }

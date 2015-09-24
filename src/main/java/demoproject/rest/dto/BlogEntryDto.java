@@ -1,5 +1,6 @@
 package demoproject.rest.dto;
 
+import demoproject.core.entity.BlogEntry;
 import org.springframework.hateoas.ResourceSupport;
 
 /**
@@ -14,5 +15,11 @@ public class BlogEntryDto extends ResourceSupport {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public BlogEntry toBlogEntry() {
+        BlogEntry entry = new BlogEntry();
+        entry.setTitle(title);
+        return entry;
     }
 }
